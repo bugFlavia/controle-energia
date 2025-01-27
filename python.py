@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.io as pio
 import numpy as np
 from scipy import stats
+from scipy.stats import shapiro
 
 app = Flask(__name__)
 
@@ -16,12 +17,17 @@ HOMES = [
 graph_dir = "static/graphs"
 os.makedirs(graph_dir, exist_ok=True)
 
+def is_normal_distribution(data):
+    stat, p_value = shapiro(data)
+    return p_value > 0.05  # Se p-value for maior que 0.05, consideramos a distribuição normal
+
 def generate_data(home_id):
     if home_id == 1:
         production_daily = [12, 15, 14, 13, 15, 16, 14, 15, 13, 12, 14, 15, 16, 13, 14, 15, 13, 14, 15, 16, 12, 14, 15, 13, 14, 15, 16, 12, 14, 15]
         consumption_daily = [10, 9, 11, 12, 10, 9, 8, 11, 10, 9, 8, 10, 9, 11, 12, 10, 9, 8, 11, 10, 9, 8, 10, 9, 11, 12, 10, 9, 8, 11]
     else:
-        production_daily = [20, 19, 18, 21, 18, 17, 25, 22, 24, 18, 21, 19, 21, 17, 18, 22, 19, 25, 21, 21, 19, 18, 19, 20, 23, 18, 19, 24, 22, 20]
+        # Valores de produção diária que seguem uma distribuição normal (média: 20 kWh, desvio padrão: 3 kWh)
+        production_daily = [18, 19, 17, 21, 22, 20, 23, 18, 19, 21, 20, 19, 22, 18, 19, 21, 20, 19, 21, 20, 22, 19, 20, 21, 22, 18, 19, 20, 21, 20]
         consumption_daily = [8, 9, 10, 11, 10, 9, 11, 10, 9, 8, 10, 9, 12, 10, 9, 8, 11, 10, 9, 8, 10, 9, 11, 12, 10, 9, 11, 10, 9, 8]
     
     production_total = sum(production_daily)
@@ -45,6 +51,12 @@ def generate_data(home_id):
 
     slope, intercept, r_value, p_value, std_err = stats.linregress(production_daily, consumption_daily)
     correlation = np.corrcoef(production_daily, consumption_daily)[0, 1]
+
+    is_production_normal = is_normal_distribution(production_daily)
+    is_consumption_normal = is_normal_distribution(consumption_daily)
+    
+    production_recommendation = "Sua produção está regular, continue assim." if is_production_normal else "Sua produção está irregular, verifique se há algum problema com as placas."
+    consumption_recommendation = "Seu consumo está regular, continue assim." if is_consumption_normal else "Seu consumo está irregular, tente controlar melhor os aparelhos elétricos."
     
     return {
         "consumption_daily": consumption_daily,
@@ -67,9 +79,12 @@ def generate_data(home_id):
         "normal_distribution_production": normal_distribution_production,
         "normal_distribution_consumption": normal_distribution_consumption,
         "used_percentage": used_percentage,
-        "stored_percentage": stored_percentage
+        "stored_percentage": stored_percentage,
+        "is_production_normal": is_production_normal,
+        "is_consumption_normal": is_consumption_normal,
+        "production_recommendation": production_recommendation,
+        "consumption_recommendation": consumption_recommendation
     }
-
 
 def generate_graphs(data, home_id):
     days = list(range(1, 31))

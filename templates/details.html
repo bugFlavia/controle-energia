@@ -81,6 +81,7 @@
             font-size: 0.9em;
             color: #888;
         }
+
         .card-body {
             display: flex;
             flex-direction: column;
@@ -106,13 +107,18 @@
                     <p><strong>Total Consumido:</strong> {{ data.consumption_total }} kWh</p>
                     <p><strong>Total Produzido:</strong> {{ data.production_total }} kWh</p>
                     <p><strong>Armazenamento Atual:</strong> {{ data.storage }} kWh</p>
-                    <p><strong>Armazenamento Anterior:</strong> {{ data.previous_storage }} kWh</p>
 
                     <h2>Estatísticas</h2>
                     <p><strong>Média de Produção Diária:</strong> {{ data.avg_daily_production }} kWh</p>
                     <p><strong>Média de Consumo Diário:</strong> {{ data.avg_daily_consumption }} kWh</p>
                     <p><strong>Mediana da Produção Diária:</strong> {{ data.median_production }} kWh</p>
                     <p><strong>Mediana do Consumo Diário:</strong> {{ data.median_consumption }} kWh</p>
+                    <p><strong>Produção segue distribuição normal?</strong> {{ 'Sim' if data.is_production_normal else 'Não' }}</p>
+                    <p><strong>Consumo segue distribuição normal?</strong> {{ 'Sim' if data.is_consumption_normal else 'Não' }}</p>
+
+                    <h2>Recomendações</h2>
+                    <p>{{ data.production_recommendation }}</p>
+                    <p>{{ data.consumption_recommendation }}</p>
 
                     <h2>Gráficos</h2>
                     <iframe src="{{ production_graph_url }}" width="600" height="400"></iframe>
@@ -129,4 +135,3 @@
 </body>
 
 </html>
-
