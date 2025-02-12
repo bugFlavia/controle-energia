@@ -95,7 +95,7 @@ def generate_graphs(data, home_id):
     fig_consumption = go.Figure(go.Bar(x=days, y=data["consumption_daily"], name='Consumo Diário', marker_color='red'))
     fig_consumption.update_layout(title='Consumo Diário')
     
-    fig_stacked = go.Figure(data=[
+    fig_stacked = go.Figure(data=[ 
         go.Bar(name='Produção Diária', x=days, y=data["production_daily"], marker_color='green'),
         go.Bar(name='Consumo Diário', x=days, y=data["consumption_daily"], marker_color='red')
     ])
@@ -151,6 +151,6 @@ def details(home_id):
 
     return render_template("details.html", home=home, data=data, production_graph_url=production_graph_url, consumption_graph_url=consumption_graph_url, stacked_graph_url=stacked_graph_url, scatter_graph_url=scatter_graph_url, pie_graph_url=pie_graph_url)
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = os.environ.get('PORT', 5000)  # Porta para Vercel ou ambiente local
+    app.run(debug=True, host="0.0.0.0", port=port)
