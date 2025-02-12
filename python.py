@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.io as pio
 import numpy as np
 from scipy import stats
-from scipy.stats import shapiro
+from .stats import shapiro
 
 app = Flask(__name__)
 
