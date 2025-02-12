@@ -1,5 +1,6 @@
 wheel
 Flask==2.3.2
 plotly==5.10.0
-scipy==1.15.1
+scipy==1.9.3
 numpy==1.23.5
+distutils = 
